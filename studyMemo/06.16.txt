@@ -1,0 +1,108 @@
+[2023.06.16(금)]
+
+spring - thymeleaf
+
+Live Reload - 설치
+
+application.properties - 설정 - Model Location 폴더명 변경
+
+[templates] - [thymeleafEx] 폴더생성 - html 7개 생성파일 생성
+
+html - <html xmlns:th="http://www.thymeleaf.org"> 변경
+
+thymeleafExController.java	- 어노테이션 작성
+			- thymeleafExample01 메소드 작성
+			- @GetMapping 어노테이션으로 경로 설정
+			- return  에 경로 작성해서 html 로 데이터 넘겨주기
+
+thymeleafEx01.html		- 코드 작성하기
+			- free fix 작성해서 데이터 받아오기 != JSTL
+
+Board2Application.java	- Run as => spring boot app 실행
+			- url 주소 :  http://localhost/thymeleaf/ex01
+
+thymeleafEx02.html		- 동일하게 작성
+
+
+====================================================
+
+[spring 으로 게시판 만들기]
+
+===================================================
+
+spring - Mybatis board
+
+DB 작성 		- table, commit
+
+각 package, 폴더 생성 - 파일 생성
+
+css, js		- 복붙
+
+fragments 	- haeder.html , footer.html 작성
+
+html		- <link><script> 추가
+		- 하단에 <th:block> 작성
+		- class="content "  추가
+
+index.html  	- <body>
+
+article.html	- <body>작성 복붙
+	    	- <html> 변경
+	    	- <link> 작성
+
+created.html
+list.html
+update.html	- article.html 처럼 작성
+
+
+created.html	- <body>작성 복붙
+		- enctype="" 삭제
+
+list.html		- <body>작성 복붙
+
+update.html	- <body>작성 복붙
+
+boardMapper.xml	- !DOCTYPE 수정
+		- <mapper> 추가
+
+MyUtil.java	- @Service 어노테이션 추가
+
+BoardServiceImpl	- implements 추가
+		- @Service 어노테이션 추가
+
+Board		- 필드 추가
+		- 어노테이션 추가
+
+BoardController	- @Controller 
+		- index( ) 메소드 추가	- 메인화면
+		- created( ) 메소드 추가 	- 글쓰기 페이지 이동
+		- list( ) 메소드 추가
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
