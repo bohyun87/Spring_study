@@ -4,5 +4,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.board2.dao.BoardDao">
- 
+	<select id="maxnum" resultType="int">
+		select nvl(max(num), 0) from board        <!-- ; 붙이지 말기 -->
+	</select>
+ 							<!-- Board 객체 자체를 타입으로 받겠다 -->
+ 	<insert id="insertData" parameterType="Board">
+ 		insert into board values(#{num}, #{name}, #{pwd}, #{email}, #{subject}, #{content}, #{ipAddr}, 0, sysdate)
+ 	</insert>
+ 	
+ 	<select id="getDataCount" parameterType="map" resultType="int">
+ 		select nvl(count(*), 0) from board where #{searchKey} like '%' || #{searchValue} || '%'
+ 	</select>
+ 	
+ 	<!-- parameterType="map" 은 가져와야 할 데이터가 여러개 일때 속성타입을 map 으로 해주면 마이바티스에서 자동으로 map 으로 받아옴 -->
+ 	<select id="getLists" parameterType="map" resultType="Board">
+ 		select * from(
+    		 select rownum rnum, data.* from (
+      			select num, name, subject, hitCount, to_char(created, 'YYYY-MM-DD') created 
+        		from board
+        		where #{searchKey} like '%' || #{searchValue} || '%'
+        		order by num desc
+        		) data
+		)
+		<![CDATA[
+			where rnum >= #{start} and rnum <= #{end}
+		]]>
+ 	
+ 	</select>
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
 </mapper>
