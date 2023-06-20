@@ -44,16 +44,17 @@ public class MyUtil {
  		
  		if(totalPage > numPerBlock && currentPageSetup > 0) {
  			sb.append("<a href=\"" + listUrl + "pageNum" + currentPageSetup + "\">◀이전</a>&nbsp"); 
- 						//↑ <a href=""> ◀이전 </a> 모양을 만든다
+ 						//↑ <a href="list.jsp?pageNum=5"> ◀이전 </a> 모양을 만든다
  		}
 		
 		//2. 6 7 8 9 10 그냥 페이지 이동 버튼 만들기
  		
  		page = currentPageSetup + 1; // => page = 1, 6, 11, 16....
  		
+ 		// ◀이전 1 2 3 4 5 다음▶ 만드는 공식
  		while(page <= totalPage && page <= (currentPageSetup + numPerBlock)) {
- 			//현재 내가 선택한 페이지의 숫자의 색상변경
  			
+ 			//현재 내가 선택한 페이지의 숫자의 색상변경
  			//현재 내가 선택한 페이지라면
  			if(page == currentPage) {
  				sb.append("<font color=\"red\">" + page + "</font> &nbsp;");
@@ -67,9 +68,13 @@ public class MyUtil {
  		}
 		
 		//3. 다음▶ 버튼 만들기
+		if(totalPage - currentPageSetup > numPerBlock) {
+			sb.append("<a href=\"" + listUrl + "pageNum" + currentPageSetup + "\">다음▶</a>&nbsp");
+		}				//↑ <a href="list.jsp?pageNum=11">다음▶</a> 모양을 만든다
 		
+		//4. 버튼 합쳐서 문자열로 리턴			
+		System.out.println(sb.toString());
 		
-		//4. 버튼 합쳐서 문자열로 리턴		
 		return sb.toString();
 	}
 

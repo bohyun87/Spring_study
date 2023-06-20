@@ -36,8 +36,30 @@
 				<th class="hitCount">조회수</th>
 			</tr>
 		</thead>
-		<tbody id="lists">			
-
+		<tbody id="lists">				<!-- for(Board board : lists) -->
+									    <!-- <tr th:each="board, status: ${lists}">  -->
+			<tr th:if="${#lists.size(lists)} > 0" th:each="board:${lists}">
+					<!-- #lists 원래 정행진 구문 / (lists)는 컨트롤에서 model로 보낸 lists  -->						
+				<td class="num" th:text="${board.num}"></td>
+				<td class="subject">
+					<a th:href="|@{${articleUrl}}&num=@{${board.num}}|" th:text="${board.subject}"></a>
+				</td>		<!-- /article?pageNum=1&searchKey=subject&searchValue=춘식&num=1 -->
+				<td class="name" th:text="${board.name}"></td>
+				<td class="created" th:text="${board.created}"></td>
+				<td class="hitCount" th:text="${board.hitCount}"></td>
+			</tr>
+			
+			<tr th:if="${#lists.size(dataCount)} > 0">
+				<td colspan="5" id="footer">
+					<a th:utext="${pageIndexList}"></a>  <!-- 태그 반영하고 싶을 때는 utext -->
+				</td>
+			</tr>
+			
+			<tr th:if="${#lists.size(dataCount)} < 0">
+				<td colspan="5">등록된 게시물이 없습니다.</td>
+			</tr>
+			
+			
 		</tbody>		
 	</table>
 	</div>
@@ -57,7 +79,7 @@
 		
 		//alert("검색실행");  =>  f.submit; 구문 완성전에 제대로 실행되는지 alert 으로 확인해보기 
 		
-		f.submit;
+		f.submit();
 	}
 
 </script>

@@ -110,39 +110,116 @@ public class BoardController {
 			param += "&searchValue=" + URLEncoder.encode(searchValue, "UTF-8");  //컴퓨터의 언어로 인코딩					
 		}
 		
-		String listUrl = "/list";
-		
-		///list?searchKey=***&searchValue=***
-		if(!param.equals("")) listUrl += "?" + param;
+			String listUrl = "/list";
 			
-		String pageIndexLString = myUtil.pageIndexList(currentPage, totalPage, listUrl);
-		
-		
+			///list?searchKey=***&searchValue=***
+			if(!param.equals("")) listUrl += "?" + param;
+				
+			String pageIndexList = myUtil.pageIndexList(currentPage, totalPage, listUrl);
 			
+			String articleUrl = "/article?pageNum=" + currentPage;
+			
+			if(!param.equals("")) {
+				articleUrl += "&" + param;
+				// =>  /article?pageNum=1&searchKey=subject&searchValue=춘식
+			}
+			
+			//model 에 데이터 보내기
+			model.addAttribute("lists", lists);	// DB 에서 가져온 전체 게시물
+			model.addAttribute("articleUrl", articleUrl); //상세페이지로 이동하기 위한 url
+			model.addAttribute("pageIndexList", pageIndexList);  //◀이전 1 2 3 4 5 다음▶
+			model.addAttribute("dataCount", dataCount);  //전체 게시물의 갯수
+						
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+				   
 		return "bbs/list";
 	}
 	
 	@RequestMapping(value = "/article", method = RequestMethod.GET) //localhost로 접속
-	public String article() {
+	public String article(HttpServletRequest request, Model model) {
+		try {
+			int num = Integer.parseInt(request.getParameter("num"));
+			String pageNum = request.getParameter("pageNum");
+			String searchKey = request.getParameter("searchKey");
+			String searchValue = request.getParameter("searchValue");
+			
+			if(searchValue != null) {
+				searchValue = URLDecoder.decode(searchValue, "UTF-8");				
+			}
+			
+			//1.조회수 늘리기
+			boardService.updateHitCount(num);
+			
+			
+			//2.게시물 데이터 가져오기
+			Board board = boardService.getReadData(num);
+			
+			if(board == null) {
+				return "redirect://list?pageNum=" + pageNum;	
+			}
+			
+			//게시글의 라인수를 구한다.
+			int lineSu = board.getContent().split("\n").length;
+			
+			String param = "pageNum=" + pageNum;
+			
+			if(searchValue != null && !searchValue.equals("")) {
+				//검색어가 있다면
+				param += "&searchKey=" + searchKey;
+				param += "&searchValue=" + URLEncoder.encode(searchValue, "UTF-8");  //컴퓨터의 언어로 인코딩					
+			}
+			
+			model.addAttribute("board", board);
+			model.addAttribute("params", param);  // key 값은 s 복수값  params 는 위의 param "pageNum, searchKey, searchValue" 를 담고 있다
+			model.addAttribute("lineSu", lineSu);
+			model.addAttribute("pageNum", pageNum);
+			
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 		return "bbs/article";
 	}
 	
 	// 수정페이지 보여주는 메소드
 	@RequestMapping(value = "/updated", method = RequestMethod.GET) //localhost로 접속
 	public String updated(HttpServletRequest request, Model model) {
-		
-		int num = Integer.parseInt(request.getParameter("num"));
-		String pageNum = request.getParameter("pageNum");
-		String searchKey = request.getParameter("searchKey");
-		String searchValue = request.getParameter("searchValue");
-		
-		if(searchValue != null) {
+		try {
+			
+			int num = Integer.parseInt(request.getParameter("num"));
+			String pageNum = request.getParameter("pageNum");
+			String searchKey = request.getParameter("searchKey");
+			String searchValue = request.getParameter("searchValue");
+			
+			if(searchValue != null) {
+				searchValue = URLDecoder.decode(searchValue, "UTF-8");				
+			}
+			
+			//전체적인 게시판 정보 가져오기
+			Board board = boardService.getReadData(num);
+			
+			if(board == null) {
+				return "redirect:/list?pageNum=" + pageNum;
+			}
 			
 			
+			String param = "pageNum=" + pageNum;
+			
+			if(searchValue != null && !searchValue.equals("")) {
+				//검색어가 있다면
+				param += "&searchKey=" + searchKey;
+				param += "&searchValue=" + URLEncoder.encode(searchValue, "UTF-8");  //컴퓨터의 언어로 인코딩					
+			}
+			
+			model.addAttribute("board", board);
+			model.addAttribute("pageNum", pageNum);
+			model.addAttribute("params", param);
+			model.addAttribute("searchKey", searchKey);
+			model.addAttribute("searchValue", searchValue);
+		
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		
 		return "bbs/updated";
@@ -150,7 +227,54 @@ public class BoardController {
 	
 	//게시글 수정하는 메소드
 	@RequestMapping(value = "/updated_ok", method = RequestMethod.POST) //localhost로 접속
-	public String updatedOK() {
-		return "bbs/updated";
+	public String updatedOK(Board board, HttpServletRequest request, Model model) {
+		String pageNum = request.getParameter("pageNum");
+		String searchKey = request.getParameter("searchKey");
+		String searchValue = request.getParameter("searchValue"); 
+		String param = "?pageNum=" + pageNum;
+		
+		try { // <br/> 태그를  \r\n 로 바꿔주기
+			board.setContent(board.getContent().replaceAll("<br/>", "\r\n"));
+			boardService.updateData(board);
+			
+			
+			if(searchValue != null && !searchValue.equals("")) {
+				//검색어가 있다면
+				param += "&searchKey=" + searchKey;
+				param += "&searchValue=" + URLEncoder.encode(searchValue, "UTF-8");  //컴퓨터의 언어로 인코딩					
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		return "redirect:/list" + param ;
+	}
+	
+	@RequestMapping(value = "/deleted_ok", method = {RequestMethod.GET})
+	public String deleteOK(HttpServletRequest request, Model model) {
+		int num = Integer.parseInt(request.getParameter("num"));
+		String pageNum = request.getParameter("pageNum");
+		String searchKey = request.getParameter("searchKey");
+		String searchValue = request.getParameter("searchValue"); 
+		String param = "?pageNum=" + pageNum;
+		
+		try {
+		
+			boardService.deleteData(num);
+			
+			if(searchValue != null && !searchValue.equals("")) {
+				//검색어가 있다면
+				param += "&searchKey=" + searchKey;
+				param += "&searchValue=" + URLEncoder.encode(searchValue, "UTF-8");  //컴퓨터의 언어로 인코딩					
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "redirect:/list" + param;
 	}
 }
