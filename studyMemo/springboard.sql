@@ -19,44 +19,69 @@ commit;
 
 select * from board;
 
---num ÄÃ·³¿¡¼­ °¡Àå Å« num À» ±¸ÇÏ´Â Äõ¸®¹®
+--num ì»¬ëŸ¼ì—ì„œ ê°€ì¥ í° num ì„ êµ¬í•˜ëŠ” ì¿¼ë¦¬ë¬¸
 select nvl(max(num), 0) from board;
 
 
 rollback;
-TRUNCATE table board;  --commit ÇßÀ» °æ¿ì ºó Å×ÀÌºí ¸¸µé±â
+TRUNCATE table board;  --commit í–ˆì„ ê²½ìš° ë¹ˆ í…Œì´ë¸” ë§Œë“¤ê¸°
 
-insert into board values(1, 'bbo', '1111', 'bbo1234@gmail.com', 'Á¦¸ñ', '³»¿ë', '111', 10, sysdate);
-insert into board values(2, 'bbo', '1111', 'bbo1234@gmail.com', 'Á¦¸ñ', '³»¿ë', '111', 10, sysdate);
+insert into board values(1, 'bbo', '1111', 'bbo1234@gmail.com', 'ì œëª©', 'ë‚´ìš©', '111', 10, sysdate);
+insert into board values(2, 'bbo', '1111', 'bbo1234@gmail.com', 'ì œëª©', 'ë‚´ìš©', '111', 10, sysdate);
 
--- ÀüÃ¼ °Ô½Ã¹°ÀÇ °¹¼ö Ãâ·Â
-select nvl(count(*), 0) from board where subject like '%Ãá½Ä%';
-select nvl(count(*), 0) from board where content like '%Áı%';
+-- ì „ì²´ ê²Œì‹œë¬¼ì˜ ê°¯ìˆ˜ ì¶œë ¥
+select nvl(count(*), 0) from board where subject like '%ì¶˜ì‹%';
+select nvl(count(*), 0) from board where content like '%ì§‘%';
 
 
---°Ë»ö ÆäÀÌÁö º¸¿©ÁÖ±â sql ±¸¹® °¡°ø
+--ê²€ìƒ‰ í˜ì´ì§€ ë³´ì—¬ì£¼ê¸° sql êµ¬ë¬¸ ê°€ê³µ
 select num, name, subject, hitCount, to_char(created, 'YYYY-MM-DD') created 
 from board
-where subject like '%Ãá½Ä%'
+where subject like '%ì¶˜ì‹%'
 order by num desc;
 
 
 select rownum rnum, data.* from (
 select num, name, subject, hitCount, to_char(created, 'YYYY-MM-DD') created 
 from board
-where subject like '%Ãá½Ä%'
+where subject like '%ì¶˜ì‹%'
 order by num desc) data;
 
 select * from(
      select rownum rnum, data.* from (
         select num, name, subject, hitCount, to_char(created, 'YYYY-MM-DD') created 
         from board
-        where subject like '%Ãá½Ä%'
+        where subject like '%ì¶˜ì‹%'
         order by num desc
         ) data
 )
 where rnum >= 1 and rnum <= 2;
--- °Ë»öÇÒ ¶§ ÆäÀÌÂ¡ Ã³¸® ¶§¹®¿¡ ÇÏ´Â ÀÛ¾÷
+-- ê²€ìƒ‰í•  ë•Œ í˜ì´ì§• ì²˜ë¦¬ ë•Œë¬¸ì— í•˜ëŠ” ì‘ì—…
+
+--ì¡°íšŒìˆ˜ ëŠ˜ë¦¬ê¸°
+update board set hitCount = hitCount + 1 where num = 1;
+
+select * from board;
+
+--ì¡°íšŒ
+
+select * from board where num = 1;
+
+rollback;
+
+update board set name='í‡´ê·¼', pwd='1234', email='bbo1234@gmail.com', subject='í•˜í•˜í•˜í•˜í•˜', content='ëƒ‰ë¬´' where num = 1;
+
+delete board where num = 7;
+
+
+
+
+
+
+
+
+
+
 
 
 
