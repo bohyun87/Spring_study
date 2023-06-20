@@ -196,10 +196,90 @@ MyUtil.java		- pageIndexList 마무리하기
 			- ◀이전 6 7 8 9 10 다음▶ 버튼 만들기
 
 
-	
+MyUtil.java	- 3. 다음▶ 버튼 만들기
+		
+BoardController.java	- 4. 페이징 처리를 한다.  => String articleUrl =
+			- model 에 데이터 보내기 
+
+list.html		- <tbody> <tr> <td>
+		- <tr> 타임리프 작성
+		- 리스트 전체 갯수 확인하기 -> lists.size(lists)
+		- if 로 확인하고 each 로 돌려주기
+		- <td>  class , 타임리프 추가
+		- <tr> <td> 추가 - 타임리프 추가 
+
+상세페이지
+
+게시물 클릭하고 들어가면 상세페이지 주소 ↓
+http://localhost/article?pageNum=1&searchKey=subject&searchValue=&num=7
+		     게시글 페이지				   게시글 번호
 
 
-BoardController	- if(searchValue != null)
+BoardController	- article() 메소드 - 매개변수
+		- try/catch
+
+boardMapper.xmxl	- 1.조회수 늘리기
+		- sql 문 가져오기
+		- 조회수 늘리기<update> 사이에 sql 문 넣기 -> num = #{num}
+		- 조회 <select> 사이에 sql 문 넣기 -> num = #{num}
+
+BoardDao.java	- updateHitCount /  getReadData => 추상메소드
+		- resultType 없으면 void / resultType 있으면 그 값을 타입으로 지정
+
+BoardService.java	- 추상메소드 복붙
+
+
+BoardServiceImpl.java	- 오버라이드 -> return  작성
+
+BoardController	- 1.조회수 늘리기 -> boardService.updateHitCount(num);
+		- 2.게시물 데이터 가져오기 -> Board board = boardService.getReadData(num); =>resultType 이 Board 여서 Board 객체에 담아줌
+		- if 문
+		- 게시글의 라인수를 구한다.
+		- model 넘겨주기
+
+article.html	- bbsArticle_header <p> 타임리프
+		- <dd> - 작성자, 줄수, 등록일, 조회수 -> 타임리프 추가
+		- bbsArticle_content <textarea>
+		- bbsArticle_noLine <p> 타임리프
+		- rightFooter 리스트 -> 리스트로 돌아갈 때 원래 보던 페이지로 돌아가기 10page -> 10page  -> th:onclick="||"  => @{${ }}
+		- leftFooter -> 수정, 삭제 ->  th:onclick="||"  => @{${ }}
+
+수정페이지
+
+BoardController	- updated() 전체 try/catch 로 감싸기
+		- 안에 코드 작성 완성하기
+
+
+updated.html	- 각 태그별 타임리프 넣기 - subject, name, email, content, pwd
+		- th:value="${ }"  -> input 태그의 내용을 가져올 때는 value 이용
+		- content 만 value 가 아니고 text
+		- bbsCreated_footer - 타임리프
+		- 수정취소 타임리프
+
+BoardController	- 게시글 수정하는 메소드
+		- 매개변수 추가하기
+		- pageNum, searchKey, searchValue 데이터 받기
+		- param - get방식 데이터 받기
+		- try/catch  -> <br/> 태그를  \r\n 로 바꿔주기
+
+boardMapper.xml	- oracle 에서 update, delete sql 문 만들기
+		- <update>  /  <delete>
+
+
+BoardDao.java	- updateData/  deleteData=> 추상메소드
+		- resultType 없으면 void / resultType 있으면 그 값을 타입으로 지정
+
+BoardService.java	- 추상메소드 복붙
+
+BoardServiceImpl.java	- 오버라이드 -> return  작성
+
+
+BoardController	- updateDataOK() 메소드 마무리 
+		- 삭제하기  -> deleteOK 메소드 만들기
+		- num, pageNum, searchKey, searchValue, param =>데이터 가져오기
+		- try/catch 구문에서 boardService  에서 만들어놓은 deleteData 불러오기
+		- 메소드 마무리
+
 
 
 
