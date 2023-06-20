@@ -63,8 +63,12 @@
 	</div>
 	</div>
 	<th:block layout:fragment="script">
-<script th:inline="javascript">
-</script>
-</th:block>
+		<script th:inline="javascript">
+			var errorMessage = [[${errorMessage}]];
+			if(errorMessage != null){
+				alert(erroMessage);
+			}
+		</script>
+	</th:block>
 
 </html>

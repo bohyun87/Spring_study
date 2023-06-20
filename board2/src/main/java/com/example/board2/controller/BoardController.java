@@ -178,6 +178,7 @@ public class BoardController {
 			
 		} catch(Exception e){
 			e.printStackTrace();
+			model.addAttribute("errorMessage", "게시글을 불러오는 중 에러가 발생했습니다.");
 		}
 		return "bbs/article";
 	}
